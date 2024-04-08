@@ -10,6 +10,10 @@ class Treatment extends Model
 {
     use HasFactory, HasUuid;
 
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_IN_PROGRESS = 'in_progress';
+    public const STATUS_COMPLETED = 'completed';
+
     protected $fillable = [
         'starts_at',
         'ends_at',
