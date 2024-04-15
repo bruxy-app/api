@@ -15,4 +15,9 @@ class Patient extends Model
         'access_code',
         'user_uuid'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_uuid', 'uuid');
+    }
 }

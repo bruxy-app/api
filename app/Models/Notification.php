@@ -14,6 +14,7 @@ class Notification extends Model
         'sent_at',
         'treatment_uuid'
     ];
+
     protected $casts = [
         'sent_at' => 'datetime',
     ];

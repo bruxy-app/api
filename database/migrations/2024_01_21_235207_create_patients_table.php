@@ -17,6 +17,7 @@ return new class extends Migration
             $table->char('sex');
             $table->string('access_code');
             $table->foreignUuid('user_uuid')->references('uuid')->on('users');
+            $table->timestamps();
         });
     }
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use YourAppRocks\EloquentUuid\Traits\HasUuid;
 
 class Clinic extends Model
@@ -13,4 +14,9 @@ class Clinic extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function questions(): HasMany
+    {
+        return $this->hasMany(Question::class, 'clinic_uuid', 'uuid');
+    }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StartTreatmentRequest extends FormRequest
+class TreatmentStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,11 @@ class StartTreatmentRequest extends FormRequest
     public function rules()
     {
         return [
-            'treatment_uuid' => 'required|uuid|exists:treatments,uuid',
+            'starts_at' => 'required|date',
+            'ends_at' => 'required|date',
+            'minimum_percentage' => 'required|numeric',
+            'status' => 'required|string',
+            'patient_uuid' => 'required|exists:patients,uuid',
         ];
     }
 }

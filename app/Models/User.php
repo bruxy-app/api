@@ -30,4 +30,9 @@ class User extends Authenticatable
     protected $casts = [
         'verified_at' => 'datetime',
     ];
+
+    public function clinic()
+    {
+        return $this->belongsTo(Clinic::class, 'clinic_uuid', 'uuid');
+    }
 }

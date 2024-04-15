@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use YourAppRocks\EloquentUuid\Traits\HasUuid;
 
 class Treatment extends Model
@@ -21,6 +23,7 @@ class Treatment extends Model
         'status',
         'actual_end',
         'patient_uuid',
+        'responsible_uuid',
     ];
 
     protected $casts = [
@@ -28,4 +31,19 @@ class Treatment extends Model
         'ends_at' => 'datetime',
         'actual_end' => 'datetime',
     ];
+
+    public function patient(): BelongsTo
+    {
+        return $this->belongsTo(Patient::class, 'patient_uuid', 'uuid');
+    }
+
+    public function responsible(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'responsible_uuid', 'uuid');
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'treatment_uuid', 'uuid');
+    }
 }
