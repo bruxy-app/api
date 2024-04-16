@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -15,7 +17,6 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'phone',
         'type',
         'password',
         'verified_at',
@@ -34,5 +35,10 @@ class User extends Authenticatable
     public function clinic()
     {
         return $this->belongsTo(Clinic::class, 'clinic_uuid', 'uuid');
+    }
+
+    protected static function newFactory(): Factory
+    {
+        return UserFactory::new();
     }
 }

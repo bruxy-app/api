@@ -17,10 +17,12 @@ return new class extends Migration
             $table->dateTime('starts_at');
             $table->dateTime('ends_at');
             $table->integer('minimum_percentage');
+            $table->integer('questions_per_day');
             $table->string('status');
             $table->dateTime('actual_end')->nullable();
             $table->foreignUuid('patient_uuid')->references('uuid')->on('patients');
             $table->foreignUuid('responsible_uuid')->references('uuid')->on('users');
+            $table->foreignUuid('clinic_uuid')->references('uuid')->on('clinics');
             $table->timestamps();
         });
     }

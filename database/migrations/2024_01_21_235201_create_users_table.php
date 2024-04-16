@@ -16,7 +16,6 @@ return new class extends Migration
             $table->uuid()->unique();
             $table->string('email')->unique();
             $table->string('name');
-            $table->string('phone');
             $table->string('type');
             $table->string('password');
             $table->timestamp('verified_at')->nullable();

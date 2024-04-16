@@ -18,6 +18,7 @@ class TreatmentResource extends JsonResource
             'duration' => $this->ends_at->diffInDays($this->starts_at),
             'patient' => $this->whenLoaded('patient', $this->patient),
             'responsible' => $this->whenLoaded('responsible', $this->responsible),
+            'notifications' => $this->whenLoaded('notifications', $this->notifications),
         ];
     }
 }

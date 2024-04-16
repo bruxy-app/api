@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notification_responses', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->text('response');
-            $table->dateTime('response_at');
-            $table->foreignUuid('notification_uuid')->references('uuid')->on('notifications');
+            $table->uuid()->unique();
+            $table->string('question');
+            $table->text('options');
+            $table->dateTime('sent_at');
             $table->foreignUuid('treatment_uuid')->references('uuid')->on('treatments');
+            $table->foreignUuid('question_uuid')->references('uuid')->on('questions');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notification_responses');
+        Schema::dropIfExists('notifications');
     }
 };

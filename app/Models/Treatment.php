@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\TreatmentFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,7 +23,9 @@ class Treatment extends Model
         'ends_at',
         'minimum_percentage',
         'status',
+        'questions_per_day',
         'actual_end',
+        'clinic_uuid',
         'patient_uuid',
         'responsible_uuid',
     ];
@@ -45,5 +49,15 @@ class Treatment extends Model
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class, 'treatment_uuid', 'uuid');
+    }
+
+    public function clinic(): BelongsTo
+    {
+        return $this->belongsTo(Clinic::class, 'clinic_uuid', 'uuid');
+    }
+
+    protected static function newFactory(): Factory
+    {
+        return TreatmentFactory::new();
     }
 }

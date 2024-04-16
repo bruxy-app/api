@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('treatments')->group(function () {
     Route::get('', [TreatmentController::class, 'index']);
     ROute::get('{treatment:uuid}', [TreatmentController::class, 'show']);
-    Route::get('{treatment:uuid}/scheduled_notifications', [TreatmentController::class, 'getNotifications']);
+    Route::get('{treatment:uuid}/notifications', [TreatmentController::class, 'getNotifications']);
     Route::post('start', [TreatmentController::class, 'start']);
 });
 // });
