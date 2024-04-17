@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->uuid()->unique();
-            $table->string('question');
-            $table->text('options');
+            $table->text('questions');
             $table->dateTime('sent_at');
+            $table->text('response')->nullable();
+            $table->dateTime('response_at')->nullable();
             $table->foreignUuid('treatment_uuid')->references('uuid')->on('treatments');
-            $table->foreignUuid('question_uuid')->references('uuid')->on('questions');
             $table->timestamps();
         });
     }
