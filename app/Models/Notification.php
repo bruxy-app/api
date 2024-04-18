@@ -23,6 +23,7 @@ class Notification extends Model
 
     protected $casts = [
         'questions' => 'array',
+        'response' => 'array',
         'sent_at' => 'datetime',
         'options' => 'array',
         'response_at' => 'datetime'

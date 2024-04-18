@@ -8,17 +8,15 @@ use App\Http\Resources\TreatmentResource;
 use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Treatment;
+use App\Services\CreateNotificationsForTreatmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class TreatmentController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(private CreateNotificationsForTreatmentService $createNotificationsForTreatmentService)
     {
-        return response()->json([
-            'progress' => 70
-        ]);
     }
 
     public function show(Treatment $treatment)
@@ -40,22 +38,7 @@ class TreatmentController extends Controller
             ]);
 
             // create notifications
-            $durationInDays = $treatment->starts_at->diffInDays($treatment->ends_at);
-            $questionsPerDay = $treatment->questions_per_day;
-
-            for ($i = 0; $i < $durationInDays; $i++) {
-                for ($j = 0; $j < $questionsPerDay; $j++) {
-                    foreach ($treatment->clinic->questions as $question) {
-                        $treatment->notifications()->create([
-                            'question' => $question->question,
-                            'options' => $question->options,
-                            // TODO: update this later
-                            'sent_at' => $treatment->starts_at->addDays($i)
-                        ]);
-                    }
-                }
-            }
-
+            $this->createNotificationsForTreatmentService->handle($treatment);
 
             DB::commit();
         } catch (Throwable $e) {
@@ -80,7 +63,12 @@ class TreatmentController extends Controller
                 ];
             }
 
+            logger('Response', [
+                'response' => $response
+            ]);
+
             $notification->response = $response;
+            // TODO: update this to consider the time the user responded, store in the device and send in the request
             $notification->response_at = now();
 
             $notification->save();
@@ -140,6 +128,8 @@ class TreatmentController extends Controller
 
     public function getNotifications(Treatment $treatment)
     {
-        return response()->json(TreatmentResource::make($treatment->load('notifications')));
+        return response()->json(TreatmentResource::make($treatment->load(['notifications' => function ($query) {
+            $query->whereNull('response');
+        }])));
     }
 }

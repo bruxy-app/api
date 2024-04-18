@@ -2,21 +2,20 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
-use App\Http\Resources\QuestionResource;
 use App\Models\Clinic;
-use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Question;
 use App\Models\Treatment;
 use App\Models\User;
-use Carbon\Carbon;
+use App\Services\CreateNotificationsForTreatmentService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
+    public function __construct(private CreateNotificationsForTreatmentService $createNotificationsForTreatmentService)
+    {
+    }
     /**
      * Seed the application's database.
      */
@@ -67,24 +66,6 @@ class DatabaseSeeder extends Seeder
             'responsible_uuid' => $professionalUser->uuid
         ]);
 
-        $duration = $treatment->starts_at->diffInDays($treatment->ends_at);
-        for ($i = 0; $i < $duration; $i++) {
-            for ($j = 0; $j < $treatment->questions_per_day; $j++) {
-                // amount of time between each question, considering it has to start at 8 and end at 18
-                $sentAt = (new Carbon())->setTime(8, 0, 0)->addDays($i)->addHours($j * 2);
-                Notification::create([
-                    'treatment_uuid' => $treatment->uuid,
-                    'questions' => $clinic->questions->map(function ($question) {
-                        return [
-                            'uuid' => $question->uuid,
-                            'question' => $question->question,
-                            'options' => $question->options,
-                        ];
-                    }),
-                    // between 8:00 and 18:00
-                    'sent_at' => $sentAt
-                ]);
-            }
-        }
+        $this->createNotificationsForTreatmentService->handle($treatment);
     }
 }
