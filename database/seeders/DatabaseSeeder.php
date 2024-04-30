@@ -25,13 +25,8 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test Clinic'
         ]);
 
-        for ($i = 0; $i < 5; $i++) {
-            Question::factory()->create([
-                'question' => 'Question ' . $i,
-                'options' => ['Option 1', 'Option 2', 'Option 3'],
-                'clinic_uuid' => $clinic->uuid
-            ]);
-        }
+        // set fixed questions for trial period
+        $this->createQuestions($clinic);
 
         $professionalUser = User::factory()->create([
             'name' => 'Test User',
@@ -67,5 +62,31 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->createNotificationsForTreatmentService->handle($treatment);
+    }
+
+    private function createQuestions(Clinic $clinic): void
+    {
+        $questions = [
+            [
+                'question' => 'Qual é a sua condição atual?',
+                'options' => ['Relaxado', 'Maxiliar contraído (sem os dentes em contato)', 'Contato dentário', 'Aperta os dentes', 'Range os dentes']
+            ],
+            [
+                'question' => 'Você está com dor?',
+                'options' => ['Sim', 'Não']
+            ],
+            [
+                'question' => 'Como avalia sua dor de 0 a 10?',
+                'options' => ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+            ],
+        ];
+
+        foreach ($questions as $question) {
+            Question::factory()->create([
+                'question' => $question['question'],
+                'options' => $question['options'],
+                'clinic_uuid' => $clinic->uuid
+            ]);
+        }
     }
 }
