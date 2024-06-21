@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -11,17 +11,15 @@ class AuthController extends Controller
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-
-            return redirect()->intended('home');
+        $user = User::where('email', $credentials['email'])->where('type', 'professional')->first();
+        if ($user) {
+            return response()->json(['uuid' => $user->uuid]);
         }
 
         return response()->json([
-            'message' => 'Invalid credentials'
-        ], 401);
+            'error' => 'Usuário não encontrado'
+        ], 404);
     }
 }

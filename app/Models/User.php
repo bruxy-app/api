@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -35,6 +36,11 @@ class User extends Authenticatable
     public function clinic()
     {
         return $this->belongsTo(Clinic::class, 'clinic_uuid', 'uuid');
+    }
+
+    public function treatments(): HasMany
+    {
+        return $this->hasMany(Treatment::class, 'responsible_uuid', 'uuid');
     }
 
     protected static function newFactory(): Factory
