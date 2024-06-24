@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,12 +18,23 @@ class FrontendController extends Controller
         $validated = $request->validate([
             'token' => 'required|string'
         ]);
-        $user = User::with('treatments.patient.user')
+        $user = User::with(['treatments.patient.user', 'clinic.patients.patient.treatment'])
             ->where('uuid', $validated['token'])
             ->first();
 
         return Inertia::render('Dashboard', [
             'user' => $user
+        ]);
+    }
+
+    public function newPatient()
+    {
+        return Inertia::render('NewPatient');
+    }
+    public function patientDetails(Patient $patient)
+    {
+        return Inertia::render('PatientDetails', [
+            'patient' => $patient->load(['user', 'treatment']),
         ]);
     }
 }

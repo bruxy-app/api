@@ -43,6 +43,11 @@ class User extends Authenticatable
         return $this->hasMany(Treatment::class, 'responsible_uuid', 'uuid');
     }
 
+    public function patient()
+    {
+        return $this->hasOne(Patient::class, 'user_uuid', 'uuid');
+    }
+
     protected static function newFactory(): Factory
     {
         return UserFactory::new();

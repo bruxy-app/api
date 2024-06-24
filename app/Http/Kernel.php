@@ -45,7 +45,8 @@ class Kernel extends HttpKernel
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \App\Http\Middleware\ForceJson::class
+            \App\Http\Middleware\ForceJson::class,
+            \App\Http\Middleware\ValidatePatientTreatment::class,
         ],
     ];
 
@@ -75,6 +76,7 @@ class Kernel extends HttpKernel
     ];
 
     protected $middlewarePriority = [
-        \App\Http\Middleware\ForceJson::class
+        \App\Http\Middleware\ForceJson::class,
+        \App\Http\Middleware\ValidatePatientTreatment::class,
     ];
 }

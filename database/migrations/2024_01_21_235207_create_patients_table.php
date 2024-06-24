@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
             $table->uuid()->unique();
-            $table->char('sex');
             $table->string('access_code');
             $table->foreignUuid('user_uuid')->references('uuid')->on('users');
             $table->timestamps();

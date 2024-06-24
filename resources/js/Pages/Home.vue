@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { router } from "@inertiajs/vue3";
+import Header from "../Components/Header.vue";
 
 const email = ref("");
 const errorMessage = ref("");
@@ -32,9 +33,7 @@ const handleLogin = () => {
 </script>
 
 <template>
-    <header class="header">
-        <h1>Bruxy</h1>
-    </header>
+    <Header />
     <div class="login-container">
         <div class="login-form">
             <input
@@ -60,18 +59,6 @@ const handleLogin = () => {
     justify-content: center;
     height: 100vh;
     background-color: #f0f0f0;
-}
-
-.header {
-    background-color: #2176ff;
-    width: 100%;
-    padding: 10px 0;
-    text-align: center;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    position: fixed;
-    border-radius: 0 0 10px 10px;
 }
 
 .login-form {

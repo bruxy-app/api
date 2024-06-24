@@ -13,7 +13,6 @@ class Patient extends Model
     use HasFactory, HasUuid;
 
     protected $fillable = [
-        'sex',
         'access_code',
         'user_uuid'
     ];
@@ -21,6 +20,11 @@ class Patient extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_uuid', 'uuid');
+    }
+
+    public function treatment()
+    {
+        return $this->hasOne(Treatment::class, 'patient_uuid', 'uuid');
     }
 
     protected static function newFactory(): Factory

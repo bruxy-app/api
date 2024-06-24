@@ -45,7 +45,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $patient = Patient::factory()->create([
-            'sex' => 'm',
             'access_code' => '123456',
             'user_uuid' => $patientUser->uuid
         ]);
@@ -69,7 +68,7 @@ class DatabaseSeeder extends Seeder
         $questions = [
             [
                 'question' => 'Qual é a sua condição atual?',
-                'options' => ['Relaxado', 'Maxiliar contraído (sem os dentes em contato)', 'Contato dentário', 'Aperta os dentes', 'Range os dentes']
+                'options' => ['Relaxado', 'Maxilar contraído (sem os dentes em contato)', 'Contato dentário', 'Aperta os dentes', 'Range os dentes']
             ],
             [
                 'question' => 'Você está com dor?',

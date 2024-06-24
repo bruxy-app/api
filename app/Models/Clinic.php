@@ -22,6 +22,16 @@ class Clinic extends Model
         return $this->hasMany(Question::class, 'clinic_uuid', 'uuid');
     }
 
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class, 'clinic_uuid', 'uuid');
+    }
+
+    public function patients(): HasMany
+    {
+        return $this->users()->where('type', 'patient');
+    }
+
     protected static function newFactory(): Factory
     {
         return ClinicFactory::new();

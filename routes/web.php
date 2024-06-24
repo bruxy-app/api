@@ -24,3 +24,5 @@ Route::get('/', function () {
 });
 
 Route::get('dashboard', [FrontendController::class, 'dashboard']);
+Route::get('new-patient', [FrontendController::class,'newPatient']);
+Route::get('patient/{patient:uuid}', [FrontendController::class,'patientDetails']);

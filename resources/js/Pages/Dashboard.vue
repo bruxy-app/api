@@ -1,17 +1,38 @@
 <script setup>
 import { ref } from "vue";
+import { router } from "@inertiajs/vue3";
+import Header from "../Components/Header.vue";
 
 const props = defineProps({
     user: Object,
 });
+
+const getFormattedDate = (date) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+
+    return new Date(date).toLocaleDateString("pt-BR", options);
+};
+
+const openPatientDetails = (patient) => {
+    router.visit(`/patient/${patient.patient.uuid}`);
+};
+
+const onAddNewPatient = () => {
+    router.visit("/new-patient");
+};
 </script>
 
 <template>
-    <header class="header">
-        <h1>Bruxy</h1>
-    </header>
+    <Header />
     <div class="content">
-        <h2>Tratamentos de {{ user.name }}</h2>
+        <div class="is-flex is-justify-content-space-between">
+            <h2 class="title has-text-dark">Pacientes de {{ user.name }}</h2>
+            <div>
+                <button class="button is-info" @click="onAddNewPatient">
+                    Adicionar paciente
+                </button>
+            </div>
+        </div>
         <table class="treatment-table">
             <thead>
                 <tr>
@@ -22,13 +43,31 @@ const props = defineProps({
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="treatment in user.treatments" :key="treatment.id">
-                    <td>{{ treatment.patient.user.name }}</td>
-                    <td>
-                        {{ new Date(treatment.starts_at).toLocaleDateString() }}
+                <tr
+                    v-for="patient in user.clinic.patients"
+                    :key="patient.uuid"
+                    @click="openPatientDetails(patient)"
+                >
+                    <td class="has-text-dark">
+                        {{ patient.name }}
                     </td>
-                    <td>
-                        {{ new Date(treatment.ends_at).toLocaleDateString() }}
+                    <td class="has-text-dark">
+                        {{
+                            patient.patient.treatment
+                                ? getFormattedDate(
+                                      patient.patient.treatment.starts_at
+                                  )
+                                : "-"
+                        }}
+                    </td>
+                    <td class="has-text-dark">
+                        {{
+                            patient.patient.treatment
+                                ? getFormattedDate(
+                                      patient.patient.treatment.ends_at
+                                  )
+                                : "-"
+                        }}
                     </td>
                 </tr>
             </tbody>
@@ -37,20 +76,6 @@ const props = defineProps({
 </template>
 
 <style scoped>
-.header {
-    background-color: #2176ff;
-    width: 100%;
-    padding: 10px 0;
-    text-align: center;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    position: fixed;
-    top: 0;
-    border-radius: 0 0 10px 10px;
-    z-index: 10;
-}
-
 .content {
     padding: 20px;
     margin-top: 60px;
@@ -85,6 +110,7 @@ h2 {
 
 .treatment-table tr:hover {
     background-color: #f1f1f1;
+    cursor: pointer;
 }
 
 .treatment-table tr:last-child td {

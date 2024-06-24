@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\TreatmentController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,13 +16,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware(['auth:sanctum'])->group(function () {
 Route::prefix('treatments')->group(function () {
     ROute::get('{treatment:uuid}', [TreatmentController::class, 'show']);
     Route::get('{treatment:uuid}/notifications', [TreatmentController::class, 'getNotifications']);
     Route::post('start', [TreatmentController::class, 'start']);
     Route::post('{notification:uuid}/respond', [TreatmentController::class, 'storeResponse']);
 });
-// });
 
 Route::post('login', [AuthController::class, 'login']);
+Route::post('patient', [PatientController::class, 'store']);
