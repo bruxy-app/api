@@ -24,10 +24,11 @@ class TreatmentStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'starts_at' => 'required|date',
-            'ends_at' => 'required|date',
-            'minimum_percentage' => 'required|numeric',
-            'status' => 'required|string',
+            // 'starts_at' => 'required|date',
+            // 'ends_at' => 'required|date',
+            // 'minimum_percentage' => 'required|numeric',
+            // 'status' => 'required|string',
+            'user_uuid' => 'required|exists:users,uuid',
             'patient_uuid' => 'required|exists:patients,uuid',
         ];
     }

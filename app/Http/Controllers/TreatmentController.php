@@ -32,9 +32,14 @@ class TreatmentController extends Controller
             DB::beginTransaction();
 
             $treatment = Treatment::create([
-                ...$validated,
-                'responsible_uuid' => auth()->id,
-                'clinic_uuid' => Patient::where('uuid', $validated['patient_uuid'])->first()->uuid
+                'starts_at' => now(),
+                'ends_at' => now()->addDays(30),
+                'minimum_percentage' => 70,
+                'status' => Treatment::STATUS_PENDING,
+                'responsible_uuid' => $validated['user_uuid'],
+                'questions_per_day' => 8,
+                'patient_uuid' => $validated['patient_uuid'],
+                'clinic_uuid' => Patient::with('user.clinic')->where('uuid', $validated['patient_uuid'])->first()->user->clinic->uuid
             ]);
 
             // create notifications
@@ -45,7 +50,13 @@ class TreatmentController extends Controller
             report($e);
 
             DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
         }
+
+        return response()->json(new TreatmentResource($treatment));
     }
 
     public function storeResponse(Notification $notification, Request $request)
@@ -128,8 +139,10 @@ class TreatmentController extends Controller
 
     public function getNotifications(Treatment $treatment)
     {
-        return response()->json(TreatmentResource::make($treatment->load(['notifications' => function ($query) {
-            $query->whereNull('response');
-        }])));
+        return response()->json(TreatmentResource::make($treatment->load([
+            'notifications' => function ($query) {
+                $query->whereNull('response');
+            }
+        ])));
     }
 }

@@ -1,12 +1,39 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { router } from "@inertiajs/vue3";
 import Header from "../Components/Header.vue";
+import axios from "axios";
 
 const props = defineProps({
     patient: Object,
 });
+let treatmentUuid = ref("");
 
-const onStartTreatment = () => {};
+onMounted(() => {
+    if (props.patient.treatment) {
+        treatmentUuid.value = props.patient.treatment.uuid;
+    }
+});
+
+const onStartTreatment = async () => {
+    const { data } = await axios.post("/api/treatments", {
+        patient_uuid: props.patient.uuid,
+        user_uuid: localStorage.getItem("token"),
+    });
+
+    treatmentUuid = data.uuid;
+
+    router.visit("/patient/" + props.patient.uuid, {
+        replace: true,
+    });
+};
+
+const back = () => {
+    router.visit("/dashboard", {
+        replace: true,
+        data: { token: localStorage.getItem("token") },
+    });
+};
 </script>
 
 <template>
@@ -14,32 +41,14 @@ const onStartTreatment = () => {};
     <section class="section">
         <div class="container">
             <div class="box" style="background-color: antiquewhite">
+                <button class="button is-info" @click="back">Voltar</button>
                 <h1 class="title has-text-dark">
                     Paciente: {{ patient.user.name }}
                 </h1>
-                <div v-if="patient.treatment">
-                    <h2 class="subtitle">Treatments</h2>
-                    <table class="table is-fullwidth is-striped">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Date</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{{ patient.treatment }}</td>
-                                <!-- <td>
-                                    {{
-                                        new Date(
-                                            patient.treatment.date
-                                        ).toLocaleDateString()
-                                    }}
-                                </td> -->
-                            </tr>
-                        </tbody>
-                    </table>
+                <div v-if="treatmentUuid">
+                    <span class="has-text-dark"
+                        >Código do tratamento: {{ treatmentUuid }}</span
+                    >
                 </div>
                 <div v-else>
                     <div

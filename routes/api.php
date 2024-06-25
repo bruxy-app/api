@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('treatments')->group(function () {
-    ROute::get('{treatment:uuid}', [TreatmentController::class, 'show']);
+    Route::post('', [TreatmentController::class, 'store']);
+    Route::get('{treatment:uuid}', [TreatmentController::class, 'show']);
     Route::get('{treatment:uuid}/notifications', [TreatmentController::class, 'getNotifications']);
     Route::post('start', [TreatmentController::class, 'start']);
     Route::post('{notification:uuid}/respond', [TreatmentController::class, 'storeResponse']);

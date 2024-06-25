@@ -14,11 +14,22 @@ const getFormattedDate = (date) => {
 };
 
 const openPatientDetails = (patient) => {
-    router.visit(`/patient/${patient.patient.uuid}`);
+    router.visit(`/patient/${patient.patient.uuid}`, {
+        props: {
+            patient,
+        },
+    });
 };
 
 const onAddNewPatient = () => {
     router.visit("/new-patient");
+};
+
+const update = () => {
+    router.visit("/dashboard", {
+        replace: true,
+        data: { token: props.user.uuid },
+    });
 };
 </script>
 
@@ -26,7 +37,17 @@ const onAddNewPatient = () => {
     <Header />
     <div class="content">
         <div class="is-flex is-justify-content-space-between">
-            <h2 class="title has-text-dark">Pacientes de {{ user.name }}</h2>
+            <div
+                class="is-flex is-align-items-center"
+                style="margin-bottom: 20px"
+            >
+                <h2 class="m-0 has-text-dark mr-2">
+                    Pacientes de {{ user.name }}
+                </h2>
+                <button class="button is-success" @click="update">
+                    Atualizar
+                </button>
+            </div>
             <div>
                 <button class="button is-info" @click="onAddNewPatient">
                     Adicionar paciente
@@ -37,9 +58,9 @@ const onAddNewPatient = () => {
             <thead>
                 <tr>
                     <th>Paciente</th>
+                    <th>Em tratamento</th>
                     <th>Data de início</th>
                     <th>Data fim</th>
-                    <!-- <th>Porcentagem de conclusão</th> -->
                 </tr>
             </thead>
             <tbody>
@@ -50,6 +71,9 @@ const onAddNewPatient = () => {
                 >
                     <td class="has-text-dark">
                         {{ patient.name }}
+                    </td>
+                    <td class="has-text-dark">
+                        {{ patient.patient.treatment ? "Sim" : "Não" }}
                     </td>
                     <td class="has-text-dark">
                         {{
