@@ -36,19 +36,23 @@ const update = () => {
 <template>
     <Header />
     <div class="content">
-        <div class="is-flex is-justify-content-space-between">
+        <div class="columns is-multiline">
             <div
-                class="is-flex is-align-items-center"
+                class="is-flex is-align-items-center column is-6"
                 style="margin-bottom: 20px"
             >
                 <h2 class="m-0 has-text-dark mr-2">
                     Pacientes de {{ user.name }}
                 </h2>
-                <button class="button is-success" @click="update">
+            </div>
+            <div class="column is-6 is-flex is-justify-content-end">
+                <button
+                    class="button is-success"
+                    style="margin-right: 20px"
+                    @click="update"
+                >
                     Atualizar
                 </button>
-            </div>
-            <div>
                 <button class="button is-info" @click="onAddNewPatient">
                     Adicionar paciente
                 </button>
