@@ -23,7 +23,7 @@ const handleLogin = () => {
         .post("/api/login", { email: email.value })
         .then((response) => {
             localStorage.setItem("token", response.data.uuid);
-            router.visit("/home");
+            router.visit("/dashboard");
         })
         .catch((error) => {
             console.log(error.response.data);

@@ -16,13 +16,9 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Home', [
-        'user' => [
-            'name' => 'aa'
-        ]
-    ]);
+    return Inertia::render('Home');
 });
 
 Route::get('dashboard', [FrontendController::class, 'dashboard']);
-Route::get('new-patient', [FrontendController::class,'newPatient']);
-Route::get('patient/{patient:uuid}', [FrontendController::class,'patientDetails']);
+Route::get('new-patient', [FrontendController::class, 'newPatient']);
+Route::get('patient/{patient:uuid}', [FrontendController::class, 'patientDetails']);
