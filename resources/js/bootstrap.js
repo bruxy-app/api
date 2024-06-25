@@ -8,6 +8,8 @@ import axios from 'axios';
 window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// set allow headers for all requests
+window.axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
