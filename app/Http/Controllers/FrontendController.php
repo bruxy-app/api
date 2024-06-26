@@ -34,7 +34,7 @@ class FrontendController extends Controller
     public function patientDetails(Patient $patient)
     {
         return Inertia::render('PatientDetails', [
-            'patient' => $patient->load(['user', 'treatment']),
+            'patient' => $patient->load(['user', 'treatment.notifications']),
         ]);
     }
 }

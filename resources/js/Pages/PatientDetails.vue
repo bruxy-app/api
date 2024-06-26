@@ -8,17 +8,36 @@ const props = defineProps({
     patient: Object,
 });
 let treatmentUuid = ref("");
+let duration = ref(0);
+let questionsPerDay = ref(0);
+let answeredNotifications = ref([]);
 
 onMounted(() => {
     if (props.patient.treatment) {
         treatmentUuid.value = props.patient.treatment.uuid;
+        // calculate the duration of the treatment
+        duration.value = Math.round(
+            (new Date(props.patient.treatment.ends_at) -
+                new Date(props.patient.treatment.starts_at)) /
+                (24 * 60 * 60 * 1000)
+        );
+        questionsPerDay.value = props.patient.treatment.questions_per_day;
+
+        answeredNotifications.value =
+            props.patient.treatment.notifications.filter(
+                (notification) => !!notification.response
+            );
     }
+
+    console.log(props.patient);
 });
 
 const onStartTreatment = async () => {
     const { data } = await axios.post("/api/treatments", {
         patient_uuid: props.patient.uuid,
         user_uuid: localStorage.getItem("token"),
+        duration: duration.value,
+        questions_per_day: questionsPerDay.value,
     });
 
     treatmentUuid = data.uuid;
@@ -26,6 +45,12 @@ const onStartTreatment = async () => {
     router.visit("/patient/" + props.patient.uuid, {
         replace: true,
     });
+};
+
+const getResponse = (question, response) => {
+    return response.response.find((resp) => {
+        return question.options.find((option) => option === resp[0]);
+    })[0];
 };
 
 const back = () => {
@@ -39,7 +64,7 @@ const back = () => {
 <template>
     <Header />
     <section class="section">
-        <div class="container">
+        <div class="container" style="max-width: 900px">
             <div class="box" style="background-color: antiquewhite">
                 <button class="button is-info" @click="back">Voltar</button>
                 <h1 class="title has-text-dark">
@@ -47,24 +72,150 @@ const back = () => {
                 </h1>
                 <div v-if="treatmentUuid">
                     <span class="has-text-dark"
-                        >Código do tratamento: {{ treatmentUuid }}</span
+                        ><span style="font-weight: bold">
+                            Código do tratamento:
+                        </span>
+                        {{ treatmentUuid }}</span
                     >
-                </div>
-                <div v-else>
-                    <div
-                        class="is-flex is-align-items-center is-justify-content-space-between"
-                    >
-                        <p class="has-text-dark">
-                            Esse paciente não possui nenhum tratamento ativo.
+
+                    <div class="my-5">
+                        <p
+                            class="has-text-dark"
+                            style="text-decoration: underline"
+                        >
+                            Configurações do tratamento (em andamento)
+                        </p>
+                        <div>
+                            <div class="my-3">
+                                <label class="has-text-dark"
+                                    >Duração (em dias)</label
+                                >
+                                <div class="control mt-1" style="width: 80px">
+                                    <input
+                                        style="
+                                            background-color: white;
+                                            color: black;
+                                        "
+                                        class="input"
+                                        disabled
+                                        type="number"
+                                        v-model="duration"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="has-text-dark"
+                                    >Quantidade de perguntas por dia</label
+                                >
+                                <div class="control mt-1" style="width: 80px">
+                                    <input
+                                        style="
+                                            background-color: white;
+                                            color: black;
+                                        "
+                                        class="input"
+                                        disabled
+                                        type="number"
+                                        v-model="questionsPerDay"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p
+                            class="has-text-dark"
+                            style="text-decoration: underline"
+                        >
+                            Notificações respondidas
                         </p>
 
-                        <button
-                            class="button is-success"
-                            @click="onStartTreatment"
+                        <div
+                            class="mt-5"
+                            v-for="response in answeredNotifications"
                         >
-                            Iniciar tratamento
-                        </button>
+                            <div class="has-text-dark">
+                                <span style="font-weight: bold"
+                                    >Respondido em:
+                                    {{
+                                        new Date(
+                                            response.response_at
+                                        ).toLocaleDateString()
+                                    }}
+                                    às
+                                    {{
+                                        response.response_at
+                                            .split("T")[1]
+                                            .split(".")[0]
+                                    }}
+                                </span>
+
+                                <div class="mt-2"></div>
+
+                                <div
+                                    class="mb-1"
+                                    v-for="question in response.questions"
+                                >
+                                    {{ question.question }}
+
+                                    {{ getResponse(question, response) }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+                <div v-else>
+                    <p class="has-text-dark">
+                        Esse paciente não possui nenhum tratamento ativo.
+                    </p>
+
+                    <div class="my-5">
+                        <p
+                            class="has-text-dark"
+                            style="text-decoration: underline"
+                        >
+                            Configurações do tratamento
+                        </p>
+                        <div>
+                            <div class="my-3">
+                                <label class="has-text-dark"
+                                    >Duração (em dias)</label
+                                >
+                                <div class="control mt-1" style="width: 80px">
+                                    <input
+                                        style="
+                                            background-color: white;
+                                            color: black;
+                                        "
+                                        class="input"
+                                        type="number"
+                                        v-model="duration"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label class="has-text-dark"
+                                    >Quantidade de perguntas por dia</label
+                                >
+                                <div class="control mt-1" style="width: 80px">
+                                    <input
+                                        style="
+                                            background-color: white;
+                                            color: black;
+                                        "
+                                        class="input"
+                                        type="number"
+                                        v-model="questionsPerDay"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="button is-success" @click="onStartTreatment">
+                        Iniciar tratamento
+                    </button>
                 </div>
             </div>
         </div>

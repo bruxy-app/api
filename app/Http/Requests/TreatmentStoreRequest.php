@@ -26,8 +26,8 @@ class TreatmentStoreRequest extends FormRequest
         return [
             // 'starts_at' => 'required|date',
             // 'ends_at' => 'required|date',
-            // 'minimum_percentage' => 'required|numeric',
-            // 'status' => 'required|string',
+            'duration' => 'required|integer',
+            'questions_per_day' => 'nullable|integer',
             'user_uuid' => 'required|exists:users,uuid',
             'patient_uuid' => 'required|exists:patients,uuid',
         ];
