@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StartTreatmentRequest;
 use App\Http\Requests\TreatmentStoreRequest;
+use App\Http\Resources\RawTreatmentResource;
 use App\Http\Resources\TreatmentResource;
 use App\Models\Notification;
 use App\Models\Patient;
@@ -138,7 +139,7 @@ class TreatmentController extends Controller
 
     public function getNotifications(Treatment $treatment)
     {
-        return response()->json(TreatmentResource::make($treatment->load([
+        return response()->json(RawTreatmentResource::make($treatment->load([
             'notifications' => function ($query) {
                 $query->whereNull('response');
             }
