@@ -1,20 +1,23 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { router } from "@inertiajs/vue3";
 import Header from "../Components/Header.vue";
 import axios from "axios";
+import ApexCharts from "apexcharts";
 
 const props = defineProps({
     patient: Object,
 });
+
 let treatmentUuid = ref("");
 let duration = ref(7);
 let questionsPerDay = ref(8);
 let answeredNotifications = ref([]);
 let minimumPercentage = ref(70);
 let errorMessage = ref(null);
+let groupedQuestions = ref({});
 
-onMounted(() => {
+onMounted(async () => {
     if (props.patient.treatment) {
         treatmentUuid.value = props.patient.treatment.uuid;
         duration.value = props.patient.treatment.duration;
@@ -25,6 +28,10 @@ onMounted(() => {
                 (notification) => !!notification.response
             );
         minimumPercentage.value = props.patient.treatment.minimum_percentage;
+
+        groupQuestions();
+        await nextTick();
+        createCharts();
     }
 });
 
@@ -37,13 +44,13 @@ const onStartTreatment = async () => {
             questions_per_day: questionsPerDay.value,
             minimum_percentage: minimumPercentage.value,
         });
-        treatmentUuid = data.uuid;
+        treatmentUuid.value = data.uuid;
 
         router.visit("/patient/" + props.patient.uuid, {
             replace: true,
         });
     } catch (error) {
-        errorMessage = error;
+        errorMessage.value = error;
     }
 };
 
@@ -75,6 +82,51 @@ const back = () => {
     router.visit("/dashboard", {
         replace: true,
         data: { token: localStorage.getItem("token") },
+    });
+};
+
+const groupQuestions = () => {
+    groupedQuestions.value = {};
+
+    answeredNotifications.value.forEach((response) => {
+        response.questions.forEach((question) => {
+            if (!groupedQuestions.value[question.question]) {
+                groupedQuestions.value[question.question] = {
+                    options: question.options,
+                    responses: [],
+                };
+            }
+
+            groupedQuestions.value[question.question].responses.push(
+                getResponse(question, response)
+            );
+        });
+    });
+};
+
+const createCharts = () => {
+    Object.keys(groupedQuestions.value).forEach((question, index) => {
+        const questionData = groupedQuestions.value[question];
+        const seriesData = questionData.options.map((option) => {
+            return questionData.responses.filter(
+                (response) => response === option
+            ).length;
+        });
+
+        const options = {
+            chart: {
+                type: "pie",
+                height: 350,
+            },
+            series: seriesData,
+            labels: questionData.options,
+        };
+
+        const chart = new ApexCharts(
+            document.querySelector(`#chart-${index}`),
+            options
+        );
+        chart.render();
     });
 };
 </script>
@@ -179,7 +231,9 @@ const back = () => {
 
                         <div
                             class="mt-5"
-                            v-for="response in answeredNotifications"
+                            v-for="(
+                                response, responseIndex
+                            ) in answeredNotifications"
                         >
                             <div class="has-text-dark">
                                 <span style="font-weight: bold"
@@ -191,13 +245,34 @@ const back = () => {
 
                                 <div
                                     class="mb-1"
-                                    v-for="question in response.questions"
+                                    v-for="(
+                                        question, questionIndex
+                                    ) in response.questions"
                                 >
                                     {{ question.question }}
 
                                     {{ getResponse(question, response) }}
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5">
+                        <p
+                            class="has-text-dark"
+                            style="text-decoration: underline"
+                        >
+                            Gráficos de Respostas
+                        </p>
+                        <div
+                            class="charts-container"
+                            v-for="(question, index) in Object.keys(
+                                groupedQuestions
+                            )"
+                            :key="index"
+                        >
+                            <h3 class="has-text-dark mb-2">{{ question }}</h3>
+                            <div :id="`chart-${index}`" class="chart"></div>
                         </div>
                     </div>
                 </div>
@@ -321,5 +396,18 @@ input::-webkit-inner-spin-button {
 
 input[type="number"] {
     -moz-appearance: textfield;
+}
+
+.charts-container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.chart {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0 auto;
 }
 </style>
