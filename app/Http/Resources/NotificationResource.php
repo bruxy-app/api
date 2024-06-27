@@ -12,8 +12,8 @@ class NotificationResource extends JsonResource
             'uuid' => $this->uuid,
             'questions' => $this->questions,
             'response' => $this->response,
-            'response_at' => $this->response_at,
-            'sent_at' => $this->sent_at,
+            'response_at' => $this->response_at ? $this->response_at->format('d/m/Y H:i:s') : null,
+            'sent_at' => $this->sent_at->format('d/m/Y H:i:s'),
         ];
     }
 }

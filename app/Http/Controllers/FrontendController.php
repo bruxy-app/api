@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PatientResource;
 use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -34,7 +35,7 @@ class FrontendController extends Controller
     public function patientDetails(Patient $patient)
     {
         return Inertia::render('PatientDetails', [
-            'patient' => $patient->load(['user', 'treatment.notifications']),
+            'patient' => PatientResource::make($patient->load(['user', 'treatment.notifications'])),
         ]);
     }
 }

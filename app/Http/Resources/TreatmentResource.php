@@ -15,6 +15,7 @@ class TreatmentResource extends JsonResource
             'minimum_percentage' => $this->minimum_percentage,
             'status' => $this->status,
             'actual_end' => $this->actual_end,
+            'questions_per_day' => $this->questions_per_day,
             'duration' => $this->ends_at->diffInDays($this->starts_at),
             'patient' => $this->whenLoaded('patient', $this->patient),
             'responsible' => $this->whenLoaded('responsible', $this->responsible),

@@ -34,10 +34,10 @@ class TreatmentController extends Controller
             $treatment = Treatment::create([
                 'starts_at' => now(),
                 'ends_at' => now()->addDays($validated['duration']),
-                'minimum_percentage' => 70,
+                'minimum_percentage' => $validated['minimum_percentage'],
                 'status' => Treatment::STATUS_PENDING,
                 'responsible_uuid' => $validated['user_uuid'],
-                'questions_per_day' => $validated['questions_per_day'] ?? 8,
+                'questions_per_day' => $validated['questions_per_day'],
                 'patient_uuid' => $validated['patient_uuid'],
                 'clinic_uuid' => Patient::with('user.clinic')->where('uuid', $validated['patient_uuid'])->first()->user->clinic->uuid
             ]);
@@ -79,8 +79,7 @@ class TreatmentController extends Controller
             ]);
 
             $notification->response = $response;
-            // TODO: update this to consider the time the user responded, store in the device and send in the request
-            $notification->response_at = now();
+            $notification->response_at = $notification->sent_at;
 
             $notification->save();
 

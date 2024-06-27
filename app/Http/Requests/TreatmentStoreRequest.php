@@ -24,8 +24,7 @@ class TreatmentStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'starts_at' => 'required|date',
-            // 'ends_at' => 'required|date',
+            'minimum_percentage' => 'required|integer',
             'duration' => 'required|integer',
             'questions_per_day' => 'nullable|integer',
             'user_uuid' => 'required|exists:users,uuid',
