@@ -4,7 +4,7 @@ import { createInertiaApp } from "@inertiajs/vue3";
 import "../css/app.css"; // Import the reset.css file
 
 createInertiaApp({
-    title: (title) => `${title} - Bruxy`,
+    title: (title) => "Bruxy",
     resolve: (name) => {
         const pages = import.meta.glob("./Pages/**/*.vue", { eager: true });
 
